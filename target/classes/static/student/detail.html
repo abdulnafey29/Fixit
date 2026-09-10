@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint Details — FixIt Campus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/custom.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="/student/dashboard.html" class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-100">
+                        <i data-lucide="wrench" class="w-4 h-4"></i>
+                    </div>
+                    <span class="font-bold text-lg text-slate-900 tracking-tight">Fix<span class="text-indigo-600">It</span></span>
+                </a>
+                <span class="text-slate-300">/</span>
+                <span id="header-complaint-id" class="text-sm font-bold text-indigo-600">Complaint #...</span>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div id="navbar-user-avatar" class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center"></div>
+                    <div class="hidden sm:block text-left leading-tight">
+                        <p id="navbar-user-name" class="text-xs font-bold text-slate-800"></p>
+                        <p id="navbar-user-username" class="text-[11px] font-medium text-slate-500"></p>
+                        <p id="navbar-user-role" class="text-[10px] text-indigo-600 font-bold uppercase tracking-wider"></p>
+                    </div>
+                </div>
+                <a href="/student/dashboard.html" class="text-xs font-semibold text-slate-500 hover:text-indigo-600 flex items-center gap-1.5 transition border-l border-slate-200 pl-4 ml-1">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Dashboard
+                </a>
+                <button onclick="Auth.logout()" id="logout-btn" title="Logout"
+                        class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-xl border border-slate-200 transition cursor-pointer">
+                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <!-- Top Header Card -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-4">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                <div class="space-y-1">
+                    <div class="flex items-center gap-3">
+                        <span id="ticket-id" class="px-3 py-1 rounded-lg bg-indigo-50 text-indigo-700 font-mono font-bold text-sm">#...</span>
+                        <div id="priority-badge"></div>
+                        <div id="status-badge"></div>
+                    </div>
+                    <h1 id="complaint-title" class="text-xl sm:text-2xl font-bold text-slate-900 mt-2">Loading issue...</h1>
+                </div>
+                <div class="text-left sm:text-right text-xs text-slate-400">
+                    <p>Submitted On</p>
+                    <p id="created-date" class="font-semibold text-slate-700 mt-0.5">...</p>
+                </div>
+            </div>
+
+            <!-- Meta Attributes -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-2">
+                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
+                    <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Category</span>
+                    <p id="category-name" class="text-xs font-semibold text-slate-800 mt-1">...</p>
+                </div>
+                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
+                    <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Location</span>
+                    <p id="location-display" class="text-xs font-semibold text-slate-800 mt-1">...</p>
+                </div>
+                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
+                    <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Assigned Tech</span>
+                    <p id="tech-name" class="text-xs font-semibold text-indigo-700 mt-1">Unassigned</p>
+                </div>
+                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100">
+                    <span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Resolved On</span>
+                    <p id="resolved-date" class="text-xs font-semibold text-slate-800 mt-1">Pending</p>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="pt-2">
+                <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-2">Description</h3>
+                <p id="complaint-desc" class="text-sm text-slate-700 bg-slate-50/70 p-4 rounded-xl border border-slate-100 leading-relaxed whitespace-pre-line"></p>
+            </div>
+
+            <!-- Evidence Photo Preview (if present) -->
+            <div id="image-section" class="hidden pt-2">
+                <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-2">Attached Photo Evidence</h3>
+                <a id="image-link" target="_blank" class="inline-block group relative">
+                    <img id="complaint-image" class="max-h-64 rounded-xl border border-slate-200 shadow-sm group-hover:opacity-95 transition" alt="Evidence Photo">
+                    <span class="absolute bottom-2 right-2 px-2.5 py-1 rounded bg-black/70 text-white text-[10px] font-medium flex items-center gap-1">
+                        <i data-lucide="external-link" class="w-3 h-3"></i> Click to enlarge
+                    </span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Visual 4-Step Lifecycle Progress Tracker -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
+            <h2 class="text-sm font-bold uppercase tracking-wider text-slate-700">Resolution Lifecycle Progress</h2>
+
+            <div class="grid grid-cols-4 gap-2 text-center">
+                <!-- Step 1: Submitted -->
+                <div id="step-submitted" class="space-y-2">
+                    <div class="w-10 h-10 mx-auto rounded-full flex items-center justify-center font-bold text-sm bg-slate-100 text-slate-400">
+                        1
+                    </div>
+                    <p class="text-xs font-bold text-slate-800">Submitted</p>
+                    <p class="text-[10px] text-slate-400">Complaint filed</p>
+                </div>
+
+                <!-- Step 2: Assigned -->
+                <div id="step-assigned" class="space-y-2">
+                    <div class="w-10 h-10 mx-auto rounded-full flex items-center justify-center font-bold text-sm bg-slate-100 text-slate-400">
+                        2
+                    </div>
+                    <p class="text-xs font-bold text-slate-800">Assigned</p>
+                    <p class="text-[10px] text-slate-400">Technician linked</p>
+                </div>
+
+                <!-- Step 3: In Progress -->
+                <div id="step-progress" class="space-y-2">
+                    <div class="w-10 h-10 mx-auto rounded-full flex items-center justify-center font-bold text-sm bg-slate-100 text-slate-400">
+                        3
+                    </div>
+                    <p class="text-xs font-bold text-slate-800">In Progress</p>
+                    <p class="text-[10px] text-slate-400">Work underway</p>
+                </div>
+
+                <!-- Step 4: Resolved -->
+                <div id="step-resolved" class="space-y-2">
+                    <div class="w-10 h-10 mx-auto rounded-full flex items-center justify-center font-bold text-sm bg-slate-100 text-slate-400">
+                        4
+                    </div>
+                    <p class="text-xs font-bold text-slate-800">Resolved</p>
+                    <p class="text-[10px] text-slate-400">Verified & closed</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Activity Timeline Audit Trail -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
+            <h2 class="text-sm font-bold uppercase tracking-wider text-slate-700">Audit History & Updates</h2>
+
+            <div id="timeline-container" class="space-y-6 relative pl-4 sm:pl-6 border-l-2 border-slate-100 ml-3">
+                <p class="text-xs text-slate-400 italic">Loading timeline...</p>
+            </div>
+        </div>
+
+        <!-- Student Feedback Section (Shown when Resolved) -->
+        <div id="feedback-section" class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-4">
+            <div id="feedback-form-container" class="space-y-4">
+                <div>
+                    <h3 class="text-base font-bold text-slate-900">How would you rate the resolution?</h3>
+                    <p class="text-xs text-slate-500">Your feedback helps campus administration evaluate maintenance performance.</p>
+                </div>
+
+                <!-- Interactive Star Rating -->
+                <div class="flex items-center gap-2" id="star-rating-container">
+                    <button type="button" class="star-btn text-2xl text-slate-300 hover:text-amber-400 transition" data-star="1">★</button>
+                    <button type="button" class="star-btn text-2xl text-slate-300 hover:text-amber-400 transition" data-star="2">★</button>
+                    <button type="button" class="star-btn text-2xl text-slate-300 hover:text-amber-400 transition" data-star="3">★</button>
+                    <button type="button" class="star-btn text-2xl text-slate-300 hover:text-amber-400 transition" data-star="4">★</button>
+                    <button type="button" class="star-btn text-2xl text-slate-300 hover:text-amber-400 transition" data-star="5">★</button>
+                    <span id="star-label" class="text-xs font-bold text-amber-600 ml-2">Click to rate</span>
+                </div>
+
+                <div>
+                    <textarea id="feedback-comment" rows="3" placeholder="Optional comments on technician promptness and repair quality..."
+                              class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"></textarea>
+                </div>
+
+                <button type="button" id="submit-feedback-btn"
+                        class="px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-md shadow-emerald-100 transition flex items-center gap-2">
+                    <i data-lucide="check" class="w-4 h-4"></i>
+                    <span>Submit Feedback</span>
+                </button>
+            </div>
+
+            <!-- Existing Feedback View -->
+            <div id="existing-feedback-view" class="hidden p-4 rounded-xl bg-emerald-50/60 border border-emerald-200 space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-emerald-800">Your Feedback Recorded</span>
+                    <span id="view-feedback-date" class="text-[10px] text-emerald-600 font-medium"></span>
+                </div>
+                <div id="view-stars" class="text-amber-500 font-bold text-lg"></div>
+                <p id="view-feedback-comment" class="text-xs text-emerald-900 italic"></p>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/ui.js"></script>
+    <script>
+        lucide.createIcons();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const complaintId = urlParams.get('id');
+
+        UI.initNavbar();
+
+        if (!complaintId) {
+            window.location.href = '/student/dashboard.html';
+        } else {
+            loadComplaintDetails(complaintId);
+        }
+
+        async function loadComplaintDetails(id) {
+            try {
+                const res = await API.get(`/complaints/${id}`);
+                const c = res.data;
+
+                document.getElementById('header-complaint-id').textContent = `Complaint #${c.id}`;
+                document.getElementById('ticket-id').textContent = `#${c.id}`;
+                document.getElementById('complaint-title').textContent = c.title;
+                document.getElementById('complaint-desc').textContent = c.description;
+                document.getElementById('category-name').textContent = c.categoryName;
+                document.getElementById('location-display').textContent = c.locationDisplay;
+                document.getElementById('priority-badge').innerHTML = UI.getPriorityBadge(c.priority);
+                document.getElementById('status-badge').innerHTML = UI.getStatusBadge(c.status);
+                document.getElementById('created-date').textContent = UI.formatDate(c.createdAt);
+                document.getElementById('tech-name').textContent = c.assignedTechnicianName || 'Pending Assignment';
+                document.getElementById('resolved-date').textContent = c.resolvedAt ? UI.formatDate(c.resolvedAt) : 'In Progress';
+
+                if (c.imageUrl) {
+                    const imgSec = document.getElementById('image-section');
+                    const img = document.getElementById('complaint-image');
+                    const link = document.getElementById('image-link');
+                    img.src = c.imageUrl;
+                    link.href = c.imageUrl;
+                    imgSec.classList.remove('hidden');
+                }
+
+                // Update Visual 4-Step Tracker
+                updateProgressTracker(c.status);
+
+                // Render Timeline
+                renderTimeline(c.updates || []);
+
+                // Feedback Section
+                if (c.status === 'RESOLVED') {
+                    document.getElementById('feedback-section').classList.remove('hidden');
+                    try {
+                        const fbRes = await API.get(`/complaints/${c.id}/feedback`);
+                        if (fbRes.data && fbRes.data.submitted) {
+                            displayExistingFeedback(fbRes.data);
+                        } else {
+                            setupFeedbackForm(c.id);
+                        }
+                    } catch (e) {
+                        if (c.feedback) {
+                            displayExistingFeedback(c.feedback);
+                        } else {
+                            setupFeedbackForm(c.id);
+                        }
+                    }
+                }
+
+                lucide.createIcons();
+            } catch (err) {
+                console.error(err);
+                UI.showToast(err.message || 'Error loading details', 'error');
+            }
+        }
+
+        function updateProgressTracker(status) {
+            const steps = ['SUBMITTED', 'ASSIGNED', 'IN_PROGRESS', 'RESOLVED'];
+            const stepOrder = {
+                'SUBMITTED': 1,
+                'ASSIGNED': 2,
+                'IN_PROGRESS': 3,
+                'RESOLVED': 4
+            };
+
+            const currentIdx = stepOrder[status] || 1;
+
+            const updateStepUI = (elemId, stepNum) => {
+                const el = document.getElementById(elemId);
+                const circle = el.querySelector('div');
+                if (stepNum < currentIdx) {
+                    // Completed
+                    circle.className = 'w-10 h-10 mx-auto rounded-full flex items-center justify-center font-bold text-sm bg-emerald-100 text-emerald-700 border-2 border-emerald-500';
+                    circle.innerHTML = '✓';
+                } else if (stepNum === currentIdx) {
+                    // Active
+                    circle.className = 'w-10 h-10 mx-auto rounded-full flex items-center justify-center font-bold text-sm bg-indigo-600 text-white shadow-lg shadow-indigo-200 animate-pulse';
+                    circle.innerHTML = stepNum;
+                } else {
+                    // Pending
+                    circle.className = 'w-10 h-10 mx-auto rounded-full flex items-center justify-center font-bold text-sm bg-slate-100 text-slate-400';
+                    circle.innerHTML = stepNum;
+                }
+            };
+
+            updateStepUI('step-submitted', 1);
+            updateStepUI('step-assigned', 2);
+            updateStepUI('step-progress', 3);
+            updateStepUI('step-resolved', 4);
+        }
+
+        function renderTimeline(updates) {
+            const container = document.getElementById('timeline-container');
+            if (!updates || updates.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400">No updates logged yet.</p>';
+                return;
+            }
+
+            container.innerHTML = updates.map(u => `
+                <div class="relative pl-6 space-y-1">
+                    <span class="absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full bg-indigo-600 border-2 border-white ring-4 ring-indigo-50"></span>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="font-bold text-slate-800">${escapeHtml(u.updatedByName)} (${u.updatedByRole.replace('ROLE_', '')})</span>
+                        <span class="text-slate-400 text-[10px]">${UI.formatDate(u.createdAt)}</span>
+                    </div>
+                    <div class="inline-block">${UI.getStatusBadge(u.newStatus)}</div>
+                    <p class="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100 mt-1">${escapeHtml(u.comment || 'Status updated.')}</p>
+                </div>
+            `).join('');
+        }
+
+        let selectedRating = 5;
+
+        function setupFeedbackForm(id) {
+            const stars = document.querySelectorAll('.star-btn');
+            const label = document.getElementById('star-label');
+
+            const highlightStars = (rating) => {
+                stars.forEach(s => {
+                    const val = parseInt(s.dataset.star);
+                    if (val <= rating) {
+                        s.classList.remove('text-slate-300');
+                        s.classList.add('text-amber-400');
+                    } else {
+                        s.classList.remove('text-amber-400');
+                        s.classList.add('text-slate-300');
+                    }
+                });
+                label.textContent = `${rating} of 5 Stars`;
+            };
+
+            stars.forEach(star => {
+                star.addEventListener('click', () => {
+                    selectedRating = parseInt(star.dataset.star);
+                    highlightStars(selectedRating);
+                });
+            });
+
+            highlightStars(5);
+
+            document.getElementById('submit-feedback-btn').addEventListener('click', async () => {
+                const comment = document.getElementById('feedback-comment').value;
+                try {
+                    const res = await API.post(`/complaints/${id}/feedback`, {
+                        rating: selectedRating,
+                        comment: comment
+                    });
+                    UI.showToast('Feedback submitted successfully!', 'success');
+                    displayExistingFeedback(res.data);
+                } catch (err) {
+                    UI.showToast(err.message || 'Failed to submit feedback', 'error');
+                }
+            });
+        }
+
+        function displayExistingFeedback(feedback) {
+            document.getElementById('feedback-form-container').classList.add('hidden');
+            const view = document.getElementById('existing-feedback-view');
+            view.classList.remove('hidden');
+
+            document.getElementById('view-stars').textContent = '★'.repeat(feedback.rating) + '☆'.repeat(5 - feedback.rating);
+            document.getElementById('view-feedback-comment').textContent = feedback.comment ? `"${feedback.comment}"` : 'No comment provided';
+            document.getElementById('view-feedback-date').textContent = UI.formatDate(feedback.submittedAt || feedback.createdAt);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+    </script>
+</body>
+</html>

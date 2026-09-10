@@ -1,0 +1,76 @@
+/* FixIt Custom Styles */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+body {
+    font-family: var(--font-sans);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Smooth transitions */
+.transition-all-200 {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Glassmorphism effects */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+/* Timeline vertical connector */
+.timeline-line {
+    position: absolute;
+    top: 24px;
+    bottom: -24px;
+    left: 19px;
+    width: 2px;
+    background-color: #e2e8f0;
+}
+
+/* Toast container */
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.toast-item {
+    pointer-events: auto;
+    animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(40px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}

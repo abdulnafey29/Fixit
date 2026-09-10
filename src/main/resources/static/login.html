@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — FixIt Campus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/custom.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-md space-y-6">
+        <!-- Logo & Title -->
+        <div class="text-center space-y-2">
+            <a href="/index.html" class="inline-flex items-center gap-2.5">
+                <div class="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                    <i data-lucide="wrench" class="w-6 h-6"></i>
+                </div>
+            </a>
+            <h2 class="text-2xl font-extrabold text-slate-900">Welcome to FixIt</h2>
+            <p class="text-sm text-slate-500">Sign in to manage campus complaints & work orders</p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="bg-white rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-200 p-8 space-y-6">
+            <div id="error-alert" class="hidden p-3 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-medium"></div>
+
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Username</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                            <i data-lucide="user" class="w-4 h-4"></i>
+                        </span>
+                        <input type="text" id="username" required
+                               placeholder="Enter your username"
+                               class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1">Password</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                            <i data-lucide="lock" class="w-4 h-4"></i>
+                        </span>
+                        <input type="password" id="password" required
+                               placeholder="••••••••"
+                               class="w-full pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm transition">
+                    </div>
+                </div>
+
+                <button type="submit" id="submit-btn"
+                        class="w-full py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm shadow-md shadow-indigo-200 transition flex items-center justify-center gap-2">
+                    <span>Sign In</span>
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </form>
+        </div>
+
+        <p class="text-center text-xs text-slate-500">
+            Don't have a student account?
+            <a href="/register.html" class="font-semibold text-indigo-600 hover:underline">Register here</a>
+        </p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/ui.js"></script>
+    <script>
+        lucide.createIcons();
+
+        const form = document.getElementById('login-form');
+        const errorAlert = document.getElementById('error-alert');
+        const submitBtn = document.getElementById('submit-btn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorAlert.classList.add('hidden');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<span>Signing in...</span>`;
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const user = await Auth.login(username, password);
+                UI.showToast(`Welcome back, ${user.name}!`, 'success');
+                setTimeout(() => {
+                    Auth.redirectBasedOnRole(user.role);
+                }, 500);
+            } catch (err) {
+                errorAlert.textContent = err.message || 'Login failed. Please check your credentials.';
+                errorAlert.classList.remove('hidden');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = `<span>Sign In</span><i data-lucide="arrow-right" class="w-4 h-4"></i>`;
+                lucide.createIcons();
+            }
+        });
+    </script>
+</body>
+</html>

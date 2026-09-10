@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — FixIt Campus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/custom.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col">
+
+    <!-- Topbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-6">
+                <a href="/admin/dashboard.html" class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-100">
+                        <i data-lucide="shield" class="w-4 h-4"></i>
+                    </div>
+                    <span class="font-bold text-lg text-slate-900 tracking-tight">Fix<span class="text-indigo-600">It</span></span>
+                </a>
+
+                <!-- Nav Links -->
+                <nav class="hidden md:flex items-center gap-1 text-xs font-semibold">
+                    <a href="/admin/dashboard.html" class="px-3 py-2 rounded-lg bg-indigo-50 text-indigo-700">Dashboard</a>
+                    <a href="/admin/complaints.html" class="px-3 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">All Complaints</a>
+                    <a href="/admin/users.html" class="px-3 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">Staff & Users</a>
+                    <a href="/admin/masters.html" class="px-3 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">Campus Masters</a>
+                </nav>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div id="navbar-user-avatar" class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center"></div>
+                    <div class="hidden sm:block text-left leading-tight">
+                        <p id="navbar-user-name" class="text-xs font-bold text-slate-800"></p>
+                        <p id="navbar-user-username" class="text-[11px] font-medium text-slate-500"></p>
+                        <p id="navbar-user-role" class="text-[10px] text-indigo-600 font-bold uppercase tracking-wider"></p>
+                    </div>
+                </div>
+                <button onclick="Auth.logout()" id="logout-btn" title="Logout"
+                        class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-xl border border-slate-200 transition cursor-pointer">
+                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Page Title & Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Campus Facility Intelligence</h1>
+                <p class="text-xs text-slate-500 mt-0.5">Real-time statistics on campus maintenance, resolution rates, and workloads.</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <a href="/admin/complaints.html" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm transition flex items-center gap-1.5">
+                    <i data-lucide="list-filter" class="w-3.5 h-3.5"></i> Manage Tickets
+                </a>
+            </div>
+        </div>
+
+        <!-- KPI Metric Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-6 gap-4">
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total</span>
+                <p id="kpi-total" class="text-2xl font-black text-slate-900">0</p>
+                <span class="text-[10px] text-slate-400">All registered</span>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
+                <span class="text-[10px] font-bold text-amber-500 uppercase tracking-wider">Pending</span>
+                <p id="kpi-pending" class="text-2xl font-black text-amber-600">0</p>
+                <span class="text-[10px] text-amber-600/70">Needs assignment</span>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
+                <span class="text-[10px] font-bold text-blue-500 uppercase tracking-wider">Assigned</span>
+                <p id="kpi-assigned" class="text-2xl font-black text-blue-600">0</p>
+                <span class="text-[10px] text-blue-600/70">With technician</span>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
+                <span class="text-[10px] font-bold text-indigo-500 uppercase tracking-wider">In Progress</span>
+                <p id="kpi-progress" class="text-2xl font-black text-indigo-600">0</p>
+                <span class="text-[10px] text-indigo-600/70">Active repair</span>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
+                <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-wider">Resolved</span>
+                <p id="kpi-resolved" class="text-2xl font-black text-emerald-600">0</p>
+                <span class="text-[10px] text-emerald-600/70">Successfully closed</span>
+            </div>
+
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-1">
+                <span class="text-[10px] font-bold text-rose-500 uppercase tracking-wider">High Priority</span>
+                <p id="kpi-high" class="text-2xl font-black text-rose-600">0</p>
+                <span class="text-[10px] text-rose-600/70">High / Critical</span>
+            </div>
+        </div>
+
+        <!-- Charts Grid (Chart.js) -->
+        <div class="grid lg:grid-cols-12 gap-6">
+            <!-- Category Distribution Bar Chart -->
+            <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-900">Complaints by Category</h3>
+                        <p class="text-[11px] text-slate-400">Identify campus infrastructure problem areas</p>
+                    </div>
+                </div>
+                <div class="h-64">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Status Distribution Donut Chart -->
+            <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-900">Resolution Status</h3>
+                        <p class="text-[11px] text-slate-400">Campus issue resolution ratio</p>
+                    </div>
+                    <span id="kpi-rate" class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        0% Resolved
+                    </span>
+                </div>
+                <div class="h-64 flex items-center justify-center">
+                    <canvas id="statusChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Location Breakdown Chart -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <div>
+                <h3 class="text-sm font-bold text-slate-900">Issue Frequency by Campus Block</h3>
+                <p class="text-[11px] text-slate-400">Distribution across Academic Blocks, Labs, and Student Facilities</p>
+            </div>
+            <div class="h-56">
+                <canvas id="locationChart"></canvas>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/ui.js"></script>
+    <script>
+        lucide.createIcons();
+
+        if (!Auth.requireRole('ROLE_ADMIN')) {
+            // stopped
+        } else {
+            UI.initNavbar('dashboard');
+            loadAnalyticsData();
+        }
+
+        async function loadAnalyticsData() {
+            try {
+                const res = await API.get('/analytics/summary');
+                const s = res.data;
+
+                // KPI counters
+                document.getElementById('kpi-total').textContent = s.totalComplaints;
+                document.getElementById('kpi-pending').textContent = s.pendingComplaints;
+                document.getElementById('kpi-assigned').textContent = s.assignedComplaints;
+                document.getElementById('kpi-progress').textContent = s.inProgressComplaints;
+                document.getElementById('kpi-resolved').textContent = s.resolvedComplaints;
+                document.getElementById('kpi-high').textContent = s.highPriorityComplaints;
+                document.getElementById('kpi-rate').textContent = `${s.resolutionRatePercentage}% Resolved`;
+
+                // 1. Category Chart
+                const catLabels = Object.keys(s.complaintsByCategory || {});
+                const catValues = Object.values(s.complaintsByCategory || {});
+                new Chart(document.getElementById('categoryChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: catLabels,
+                        datasets: [{
+                            label: 'Incidents Reported',
+                            data: catValues,
+                            backgroundColor: '#6366f1',
+                            borderRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { precision: 0 } }
+                        }
+                    }
+                });
+
+                // 2. Status Donut Chart
+                const statusLabels = Object.keys(s.complaintsByStatus || {});
+                const statusValues = Object.values(s.complaintsByStatus || {});
+                new Chart(document.getElementById('statusChart'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: statusLabels,
+                        datasets: [{
+                            data: statusValues,
+                            backgroundColor: ['#f59e0b', '#3b82f6', '#6366f1', '#10b981'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { position: 'bottom' }
+                        }
+                    }
+                });
+
+                // 3. Location Chart
+                const locLabels = Object.keys(s.complaintsByLocation || {});
+                const locValues = Object.values(s.complaintsByLocation || {});
+                new Chart(document.getElementById('locationChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: locLabels,
+                        datasets: [{
+                            label: 'Total Issues',
+                            data: locValues,
+                            backgroundColor: '#818cf8',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { precision: 0 } }
+                        }
+                    }
+                });
+
+            } catch (err) {
+                console.error(err);
+                UI.showToast('Failed to load analytics metrics', 'error');
+            }
+        }
+    </script>
+</body>
+</html>

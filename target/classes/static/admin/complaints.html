@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Complaints — FixIt Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/custom.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col">
+
+    <!-- Topbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-6">
+                <a href="/admin/dashboard.html" class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-100">
+                        <i data-lucide="shield" class="w-4 h-4"></i>
+                    </div>
+                    <span class="font-bold text-lg text-slate-900 tracking-tight">Fix<span class="text-indigo-600">It</span></span>
+                </a>
+
+                <nav class="hidden md:flex items-center gap-1 text-xs font-semibold">
+                    <a href="/admin/dashboard.html" class="px-3 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">Dashboard</a>
+                    <a href="/admin/complaints.html" class="px-3 py-2 rounded-lg bg-indigo-50 text-indigo-700">All Complaints</a>
+                    <a href="/admin/users.html" class="px-3 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">Staff & Users</a>
+                    <a href="/admin/masters.html" class="px-3 py-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition">Campus Masters</a>
+                </nav>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div id="navbar-user-avatar" class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center"></div>
+                    <div class="hidden sm:block text-left leading-tight">
+                        <p id="navbar-user-name" class="text-xs font-bold text-slate-800"></p>
+                        <p id="navbar-user-username" class="text-[11px] font-medium text-slate-500"></p>
+                        <p id="navbar-user-role" class="text-[10px] text-indigo-600 font-bold uppercase tracking-wider"></p>
+                    </div>
+                </div>
+                <button onclick="Auth.logout()" id="logout-btn" title="Logout"
+                        class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-xl border border-slate-200 transition cursor-pointer">
+                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Campus Complaints Management</h1>
+                <p class="text-xs text-slate-500 mt-0.5">Filter, investigate, prioritize, and assign maintenance tickets to technicians.</p>
+            </div>
+            <button onclick="loadComplaints()" class="px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 shadow-sm transition flex items-center gap-1.5 self-start sm:self-auto">
+                <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i> Refresh List
+            </button>
+        </div>
+
+        <!-- Filter Controls Card -->
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                <!-- Search -->
+                <div class="lg:col-span-2">
+                    <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Search Keywords</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                            <i data-lucide="search" class="w-4 h-4"></i>
+                        </span>
+                        <input type="text" id="filter-search" placeholder="Search by title, description..."
+                               class="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Status Filter -->
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Status</label>
+                    <select id="filter-status" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                        <option value="">All Statuses</option>
+                        <option value="SUBMITTED">Submitted</option>
+                        <option value="ASSIGNED">Assigned</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="RESOLVED">Resolved</option>
+                    </select>
+                </div>
+
+                <!-- Priority Filter -->
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Priority</label>
+                    <select id="filter-priority" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                        <option value="">All Priorities</option>
+                        <option value="CRITICAL">Critical</option>
+                        <option value="HIGH">High</option>
+                        <option value="MEDIUM">Medium</option>
+                        <option value="LOW">Low</option>
+                    </select>
+                </div>
+
+                <!-- Category Filter -->
+                <div>
+                    <label class="block text-[10px] font-bold uppercase text-slate-400 mb-1">Category</label>
+                    <select id="filter-category" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+                        <option value="">All Categories</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Master Complaints Table -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-600">
+                    <thead class="bg-slate-50 text-xs font-semibold uppercase text-slate-500 border-b border-slate-100">
+                        <tr>
+                            <th class="px-6 py-3.5">ID</th>
+                            <th class="px-6 py-3.5">Issue</th>
+                            <th class="px-6 py-3.5">Student</th>
+                            <th class="px-6 py-3.5">Category</th>
+                            <th class="px-6 py-3.5">Location</th>
+                            <th class="px-6 py-3.5">Priority</th>
+                            <th class="px-6 py-3.5">Status</th>
+                            <th class="px-6 py-3.5">Technician</th>
+                            <th class="px-6 py-3.5 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="complaints-table-body" class="divide-y divide-slate-100">
+                        <tr>
+                            <td colspan="9" class="text-center py-12 text-slate-400">Loading complaints...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Assign Technician Modal -->
+    <div id="assign-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-xs">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="text-base font-bold text-slate-900">Assign Technician</h3>
+                <button onclick="closeAssignModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <p class="text-xs text-slate-500" id="modal-complaint-info">Complaint #...</p>
+
+            <form id="assign-form" class="space-y-4">
+                <input type="hidden" id="modal-complaint-id">
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Select Technician</label>
+                    <select id="modal-technician-select" required
+                            class="w-full px-3 py-2.5 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 bg-white">
+                        <option value="">Select a technician...</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 uppercase mb-1">Assignment Note / Instructions</label>
+                    <textarea id="modal-comment" rows="2" placeholder="e.g. Please bring replacement ballast for projector."
+                              class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500"></textarea>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeAssignModal()" class="px-4 py-2 rounded-xl border border-slate-200 text-xs font-semibold text-slate-600 hover:bg-slate-50">Cancel</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold">Confirm Assignment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/ui.js"></script>
+    <script>
+        lucide.createIcons();
+
+        if (!Auth.requireRole('ROLE_ADMIN')) {
+            // stopped
+        } else {
+            UI.initNavbar('complaints');
+            initFilterListeners();
+            loadCategories();
+            loadTechnicians();
+            loadComplaints();
+        }
+
+        let allTechnicians = [];
+
+        async function loadCategories() {
+            try {
+                const res = await API.get('/categories');
+                const catSelect = document.getElementById('filter-category');
+                (res.data || []).forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.id;
+                    opt.textContent = c.name;
+                    catSelect.appendChild(opt);
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function loadTechnicians() {
+            try {
+                const res = await API.get('/admin/technicians');
+                allTechnicians = res.data || [];
+                const select = document.getElementById('modal-technician-select');
+                select.innerHTML = '<option value="">Select a technician...</option>';
+                allTechnicians.forEach(t => {
+                    const opt = document.createElement('option');
+                    opt.value = t.id;
+                    opt.textContent = `${t.name} (${t.specialization || 'General'}) — ${t.activeTasksCount} Active Tasks`;
+                    select.appendChild(opt);
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function initFilterListeners() {
+            const inputs = ['filter-search', 'filter-status', 'filter-priority', 'filter-category'];
+            inputs.forEach(id => {
+                document.getElementById(id).addEventListener('input', () => debounce(loadComplaints, 300)());
+                document.getElementById(id).addEventListener('change', loadComplaints);
+            });
+        }
+
+        let debounceTimer;
+        function debounce(func, delay) {
+            return function() {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => func.apply(this, arguments), delay);
+            };
+        }
+
+        async function loadComplaints() {
+            const search = document.getElementById('filter-search').value;
+            const status = document.getElementById('filter-status').value;
+            const priority = document.getElementById('filter-priority').value;
+            const categoryId = document.getElementById('filter-category').value;
+
+            let query = '/admin/complaints?';
+            if (search) query += `search=${encodeURIComponent(search)}&`;
+            if (status) query += `status=${encodeURIComponent(status)}&`;
+            if (priority) query += `priority=${encodeURIComponent(priority)}&`;
+            if (categoryId) query += `categoryId=${encodeURIComponent(categoryId)}&`;
+
+            try {
+                const res = await API.get(query);
+                const complaints = res.data || [];
+                renderComplaintsTable(complaints);
+            } catch (err) {
+                console.error(err);
+                UI.showToast(err.message || 'Error loading complaints', 'error');
+            }
+        }
+
+        function renderComplaintsTable(complaints) {
+            const tbody = document.getElementById('complaints-table-body');
+            if (complaints.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" class="text-center py-12 text-slate-400 text-xs font-medium">No complaints match your filter criteria.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = complaints.map(c => `
+                <tr class="hover:bg-slate-50/80 transition">
+                    <td class="px-6 py-4 font-mono font-bold text-indigo-600 text-xs">#${c.id}</td>
+                    <td class="px-6 py-4">
+                        <div class="font-semibold text-slate-900 text-xs">${escapeHtml(c.title)}</div>
+                        <div class="text-[10px] text-slate-400">${UI.formatDate(c.createdAt)}</div>
+                    </td>
+                    <td class="px-6 py-4 text-xs text-slate-700">${escapeHtml(c.studentName)}</td>
+                    <td class="px-6 py-4 text-xs font-medium text-slate-700">${escapeHtml(c.categoryName)}</td>
+                    <td class="px-6 py-4 text-xs text-slate-600">${escapeHtml(c.locationDisplay)}</td>
+                    <td class="px-6 py-4">${UI.getPriorityBadge(c.priority)}</td>
+                    <td class="px-6 py-4">${UI.getStatusBadge(c.status)}</td>
+                    <td class="px-6 py-4 text-xs font-medium">
+                        ${c.assignedTechnicianName ? `<span class="text-indigo-700 font-semibold">${escapeHtml(c.assignedTechnicianName)}</span>` : '<span class="text-amber-600 italic">Unassigned</span>'}
+                    </td>
+                    <td class="px-6 py-4 text-right space-x-2 whitespace-nowrap">
+                        <button onclick="openAssignModal(${c.id}, '${escapeHtml(c.title)}', ${c.assignedTechnicianId || 'null'})"
+                                class="px-2.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold transition">
+                            Assign
+                        </button>
+                        <a href="/admin/detail.html?id=${c.id}"
+                           class="px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-semibold transition inline-block">
+                            View
+                        </a>
+                    </td>
+                </tr>
+            `).join('');
+
+            lucide.createIcons();
+        }
+
+        function openAssignModal(id, title, currentTechId) {
+            document.getElementById('modal-complaint-id').value = id;
+            document.getElementById('modal-complaint-info').textContent = `Assigning Technician for Complaint #${id}: ${title}`;
+            document.getElementById('modal-technician-select').value = currentTechId || '';
+            document.getElementById('modal-comment').value = '';
+            document.getElementById('assign-modal').classList.remove('hidden');
+        }
+
+        function closeAssignModal() {
+            document.getElementById('assign-modal').classList.add('hidden');
+        }
+
+        document.getElementById('assign-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('modal-complaint-id').value;
+            const technicianId = document.getElementById('modal-technician-select').value;
+            const comment = document.getElementById('modal-comment').value;
+
+            try {
+                await API.put(`/admin/complaints/${id}/assign`, { technicianId, comment });
+                UI.showToast(`Technician assigned to Complaint #${id}!`, 'success');
+                closeAssignModal();
+                loadComplaints();
+            } catch (err) {
+                UI.showToast(err.message || 'Failed to assign technician', 'error');
+            }
+        });
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+    </script>
+</body>
+</html>

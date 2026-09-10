@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FixIt — Campus Issue Management System</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/custom.css">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Top Navigation -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="/index.html" class="flex items-center gap-2.5">
+                <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-200">
+                    <i data-lucide="wrench" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-bold tracking-tight text-slate-900">Fix<span class="text-indigo-600">It</span></span>
+                    <span class="text-xs text-slate-400 block -mt-1 font-medium">Campus Operations</span>
+                </div>
+            </a>
+
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+                <a href="#features" class="hover:text-indigo-600 transition">Features</a>
+                <a href="#workflow" class="hover:text-indigo-600 transition">Workflow</a>
+                <a href="#stats" class="hover:text-indigo-600 transition">Impact</a>
+            </nav>
+
+            <div class="flex items-center gap-3">
+                <a href="/login.html" class="px-4 py-2 text-sm font-semibold text-slate-700 hover:text-indigo-600 transition">Sign In</a>
+                <a href="/register.html" class="px-4 py-2 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-xl shadow-sm transition shadow-indigo-200">Student Sign Up</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <main class="flex-1">
+        <section class="relative overflow-hidden pt-12 pb-20 lg:pt-20 lg:pb-28">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid lg:grid-cols-12 gap-12 items-center">
+                    <div class="lg:col-span-7 space-y-8">
+                        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 text-xs font-semibold">
+                            <span class="w-2 h-2 rounded-full bg-indigo-600 animate-ping"></span>
+                            Centralized Campus Facility Management
+                        </div>
+
+                        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-[1.15]">
+                            Report campus issues. <br>
+                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-violet-600">Track in real time.</span> <br>
+                            Resolved with accountability.
+                        </h1>
+
+                        <p class="text-lg text-slate-600 max-w-2xl leading-relaxed">
+                            No more lost complaints in WhatsApp chats or verbal complaints. FixIt brings students, campus administrators, and technicians together onto one transparent, automated maintenance platform.
+                        </p>
+
+                        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-2">
+                            <a href="/login.html" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm hover:bg-indigo-700 shadow-md shadow-indigo-200 transition">
+                                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                                Report a Problem
+                            </a>
+                            <a href="/login.html" class="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 transition shadow-sm">
+                                <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                                Open Portal
+                            </a>
+                        </div>
+
+                        <!-- Trust / Campus Metrics -->
+                        <div class="grid grid-cols-3 gap-6 pt-6 border-t border-slate-200">
+                            <div>
+                                <p class="text-2xl font-bold text-slate-900">100%</p>
+                                <p class="text-xs font-medium text-slate-500">Audit Trail</p>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-bold text-slate-900">&lt; 4 hrs</p>
+                                <p class="text-xs font-medium text-slate-500">Avg. Response</p>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-bold text-indigo-600">3 Roles</p>
+                                <p class="text-xs font-medium text-slate-500">Unified Portal</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hero Visual Card -->
+                    <div class="lg:col-span-5">
+                        <div class="relative mx-auto max-w-md bg-white rounded-2xl shadow-xl shadow-slate-200/60 border border-slate-200 p-6 space-y-6">
+                            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-sm">
+                                        #DEMO
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-sm text-slate-900">Projector in Room 304</h4>
+                                        <p class="text-xs text-slate-500">Block B &bull; Equipment</p>
+                                    </div>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">In Progress</span>
+                            </div>
+
+                            <!-- Stepper Timeline -->
+                            <div class="space-y-4">
+                                <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Live Status Lifecycle</p>
+                                <div class="space-y-3">
+                                    <div class="flex items-center gap-3 text-xs">
+                                        <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">✓</div>
+                                        <span class="font-medium text-slate-700">Submitted by Student</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 text-xs">
+                                        <div class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">✓</div>
+                                        <span class="font-medium text-slate-700">Assigned to Assigned Technician</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 text-xs">
+                                        <div class="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold animate-pulse">●</div>
+                                        <span class="font-semibold text-indigo-700">In Progress &mdash; Active Repair</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 text-xs text-slate-400">
+                                        <div class="w-6 h-6 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center font-bold">○</div>
+                                        <span>Resolved &amp; Student Feedback</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between text-xs">
+                                <span class="text-slate-500">Student Satisfaction</span>
+                                <span class="font-bold text-amber-500">★★★★★ 4.9 / 5.0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="py-16 bg-white border-t border-slate-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center max-w-3xl mx-auto mb-16 space-y-3">
+                    <h2 class="text-xs font-bold uppercase tracking-wider text-indigo-600">Key Features</h2>
+                    <p class="text-3xl font-extrabold text-slate-900">Tailored for the Entire Campus Community</p>
+                    <p class="text-slate-600">Everything needed to turn chaotic informal complaints into streamlined facility management.</p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Student Card -->
+                    <div class="p-8 rounded-2xl bg-slate-50 border border-slate-200 space-y-4 hover:shadow-lg transition">
+                        <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                            <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900">For Students</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            Report issues in seconds with photo evidence, choose location and category, track live timeline updates, and give feedback upon resolution.
+                        </p>
+                        <ul class="text-xs font-medium text-slate-600 space-y-2 pt-2">
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Photo evidence attachment</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> 4-step real-time tracker</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> 5-star rating & review</li>
+                        </ul>
+                    </div>
+
+                    <!-- Admin Card -->
+                    <div class="p-8 rounded-2xl bg-slate-50 border border-slate-200 space-y-4 hover:shadow-lg transition">
+                        <div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
+                            <i data-lucide="shield-check" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900">For Administrators</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            Executive dashboard with campus-wide analytics, technician workload monitoring, ticket assignment, and category/location management.
+                        </p>
+                        <ul class="text-xs font-medium text-slate-600 space-y-2 pt-2">
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Live Chart.js analytics</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Workload balancing</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Campus master configs</li>
+                        </ul>
+                    </div>
+
+                    <!-- Technician Card -->
+                    <div class="p-8 rounded-2xl bg-slate-50 border border-slate-200 space-y-4 hover:shadow-lg transition">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                            <i data-lucide="wrench" class="w-6 h-6"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900">For Technicians</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            Personalized work order queue prioritized by urgency. One-click status advancement with repair documentation and resolution notes.
+                        </p>
+                        <ul class="text-xs font-medium text-slate-600 space-y-2 pt-2">
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Criticality priority sorting</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Repair logs & notes</li>
+                            <li class="flex items-center gap-2"><i data-lucide="check" class="w-4 h-4 text-emerald-600"></i> Completed task history</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-900">Fix<span class="text-indigo-600">It</span></span>
+                <span class="text-xs text-slate-400">&mdash; College Java Web Development Project</span>
+            </div>
+            <p class="text-xs text-slate-500">&copy; FixIt Campus Issue Management System. Built with Spring Boot & Java 17.</p>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

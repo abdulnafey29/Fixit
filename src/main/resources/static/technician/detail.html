@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Details — FixIt Technician</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/custom.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col">
+
+    <!-- Topbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="/technician/dashboard.html" class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-100">
+                        <i data-lucide="wrench" class="w-4 h-4"></i>
+                    </div>
+                    <span class="font-bold text-lg text-slate-900 tracking-tight">Fix<span class="text-indigo-600">It</span></span>
+                </a>
+                <span class="text-slate-300">/</span>
+                <span id="header-id" class="text-xs font-bold text-indigo-700">Task #...</span>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div id="navbar-user-avatar" class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-bold text-xs flex items-center justify-center"></div>
+                    <div class="hidden sm:block text-left leading-tight">
+                        <p id="navbar-user-name" class="text-xs font-bold text-slate-800"></p>
+                        <p id="navbar-user-username" class="text-[11px] font-medium text-slate-500"></p>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                            <span id="navbar-user-role" class="text-[10px] text-emerald-700 font-bold uppercase tracking-wider"></span>
+                            <span class="text-slate-300 text-[10px]">•</span>
+                            <span id="tech-specialization" class="text-[10px] text-emerald-600 font-medium"></span>
+                        </div>
+                    </div>
+                </div>
+                <a href="/technician/dashboard.html" class="text-xs font-semibold text-slate-500 hover:text-indigo-600 flex items-center gap-1.5 transition border-l border-slate-200 pl-4 ml-1">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Work Queue
+                </a>
+                <button onclick="Auth.logout()" id="logout-btn" title="Logout"
+                        class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-xl border border-slate-200 transition cursor-pointer">
+                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-5xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <div class="grid lg:grid-cols-12 gap-6 items-start">
+
+            <div class="lg:col-span-8 space-y-6">
+                <!-- Task Details Card -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-3">
+                                <span id="ticket-id" class="px-3 py-1 rounded-lg bg-indigo-50 text-indigo-700 font-mono font-bold text-sm">#...</span>
+                                <div id="priority-badge"></div>
+                                <div id="status-badge"></div>
+                            </div>
+                            <h1 id="complaint-title" class="text-xl font-bold text-slate-900 mt-2">Loading...</h1>
+                        </div>
+                        <div class="text-xs text-slate-400">
+                            <p>Reported By</p>
+                            <p id="student-name" class="font-bold text-slate-800 mt-0.5">...</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 text-xs">
+                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase">Category</span>
+                            <p id="category-name" class="font-semibold text-slate-800 mt-1">...</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase">Exact Campus Location</span>
+                            <p id="location-name" class="font-semibold text-slate-800 mt-1">...</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-2">Issue Description</h3>
+                        <p id="complaint-desc" class="text-xs text-slate-700 bg-slate-50 p-4 rounded-xl border border-slate-100 leading-relaxed whitespace-pre-line"></p>
+                    </div>
+
+                    <!-- Evidence Photo -->
+                    <div id="image-section" class="hidden pt-2">
+                        <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-2">Student Photo Evidence</h3>
+                        <a id="image-link" target="_blank">
+                            <img id="complaint-image" class="max-h-64 rounded-xl border border-slate-200 shadow-sm" alt="Photo Evidence">
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Timeline Audit -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
+                    <h3 class="text-sm font-bold uppercase text-slate-700 tracking-wider">Work Progress & Notes</h3>
+                    <div id="timeline-container" class="space-y-6 relative pl-4 sm:pl-6 border-l-2 border-slate-100 ml-3">
+                        <p class="text-xs text-slate-400">Loading timeline...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column Action Box -->
+            <div class="lg:col-span-4 space-y-6">
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+                    <h3 class="text-xs font-bold uppercase text-slate-700 tracking-wider flex items-center gap-2">
+                        <i data-lucide="check-square" class="w-4 h-4 text-emerald-600"></i>
+                        Update Work Order
+                    </h3>
+
+                    <div id="action-assigned-box" class="hidden space-y-3">
+                        <p class="text-xs text-slate-500">This task is currently assigned. Click to begin active repair.</p>
+                        <button onclick="startJob()" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm transition flex items-center justify-center gap-2">
+                            <i data-lucide="play" class="w-4 h-4"></i> Start Repair Work
+                        </button>
+                    </div>
+
+                    <div id="action-inprogress-box" class="hidden space-y-3">
+                        <p class="text-xs text-slate-500">You are currently working on this task. Provide resolution notes when complete.</p>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Resolution Work Details</label>
+                            <textarea id="action-resolve-comment" rows="3" placeholder="Describe the parts replaced or repairs made..."
+                                      class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500"></textarea>
+                        </div>
+                        <button onclick="resolveJob()" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm transition flex items-center justify-center gap-2">
+                            <i data-lucide="check" class="w-4 h-4"></i> Mark as Resolved
+                        </button>
+                    </div>
+
+                    <div id="action-resolved-box" class="hidden p-4 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 text-center space-y-1">
+                        <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">✓</div>
+                        <p class="text-xs font-bold">Issue Resolved</p>
+                        <p class="text-[10px] text-emerald-600">This work order is closed.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/ui.js"></script>
+    <script>
+        lucide.createIcons();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const complaintId = urlParams.get('id');
+
+        if (!Auth.requireRole('ROLE_TECHNICIAN')) {
+            // stopped
+        } else if (!complaintId) {
+            window.location.href = '/technician/dashboard.html';
+        } else {
+            UI.initNavbar();
+            loadTaskDetails(complaintId);
+        }
+
+        let currentStatus = null;
+
+        async function loadTaskDetails(id) {
+            try {
+                const res = await API.get(`/complaints/${id}`);
+                const c = res.data;
+                currentStatus = c.status;
+
+                document.getElementById('header-id').textContent = `Task #${c.id}`;
+                document.getElementById('ticket-id').textContent = `#${c.id}`;
+                document.getElementById('complaint-title').textContent = c.title;
+                document.getElementById('complaint-desc').textContent = c.description;
+                document.getElementById('student-name').textContent = c.studentName;
+                document.getElementById('category-name').textContent = c.categoryName;
+                document.getElementById('location-name').textContent = c.locationDisplay;
+                document.getElementById('priority-badge').innerHTML = UI.getPriorityBadge(c.priority);
+                document.getElementById('status-badge').innerHTML = UI.getStatusBadge(c.status);
+
+                if (c.imageUrl) {
+                    document.getElementById('complaint-image').src = c.imageUrl;
+                    document.getElementById('image-link').href = c.imageUrl;
+                    document.getElementById('image-section').classList.remove('hidden');
+                }
+
+                renderTimeline(c.updates || []);
+
+                // Actions Box Visibility
+                document.getElementById('action-assigned-box').classList.add('hidden');
+                document.getElementById('action-inprogress-box').classList.add('hidden');
+                document.getElementById('action-resolved-box').classList.add('hidden');
+
+                if (c.status === 'ASSIGNED') {
+                    document.getElementById('action-assigned-box').classList.remove('hidden');
+                } else if (c.status === 'IN_PROGRESS') {
+                    document.getElementById('action-inprogress-box').classList.remove('hidden');
+                } else if (c.status === 'RESOLVED') {
+                    document.getElementById('action-resolved-box').classList.remove('hidden');
+                }
+
+                lucide.createIcons();
+            } catch (err) {
+                console.error(err);
+                UI.showToast('Failed to load task details', 'error');
+            }
+        }
+
+        function renderTimeline(updates) {
+            const container = document.getElementById('timeline-container');
+            if (!updates || updates.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400">No updates logged.</p>';
+                return;
+            }
+
+            container.innerHTML = updates.map(u => `
+                <div class="relative pl-6 space-y-1">
+                    <span class="absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full bg-indigo-600 border-2 border-white ring-4 ring-indigo-50"></span>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="font-bold text-slate-800">${escapeHtml(u.updatedByName)} (${u.updatedByRole.replace('ROLE_', '')})</span>
+                        <span class="text-slate-400 text-[10px]">${UI.formatDate(u.createdAt)}</span>
+                    </div>
+                    <div class="inline-block">${UI.getStatusBadge(u.newStatus)}</div>
+                    <p class="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100 mt-1">${escapeHtml(u.comment || 'Status updated.')}</p>
+                </div>
+            `).join('');
+        }
+
+        async function startJob() {
+            try {
+                await API.put(`/technician/complaints/${complaintId}/start`, { comment: 'Technician started repair work' });
+                UI.showToast('Work marked as In Progress!', 'success');
+                loadTaskDetails(complaintId);
+            } catch (err) {
+                UI.showToast(err.message || 'Failed to start job', 'error');
+            }
+        }
+
+        async function resolveJob() {
+            const comment = document.getElementById('action-resolve-comment').value;
+            if (!comment || !comment.trim()) {
+                UI.showToast('Please enter repair notes explaining what was done', 'error');
+                return;
+            }
+
+            try {
+                await API.put(`/technician/complaints/${complaintId}/resolve`, { comment });
+                UI.showToast('Task marked as Resolved!', 'success');
+                loadTaskDetails(complaintId);
+            } catch (err) {
+                UI.showToast(err.message || 'Failed to resolve task', 'error');
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+    </script>
+</body>
+</html>

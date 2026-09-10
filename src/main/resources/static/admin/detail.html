@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complaint Operations — FixIt Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/custom.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col">
+
+    <!-- Topbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-6">
+                <a href="/admin/dashboard.html" class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-100">
+                        <i data-lucide="shield" class="w-4 h-4"></i>
+                    </div>
+                    <span class="font-bold text-lg text-slate-900 tracking-tight">Fix<span class="text-indigo-600">It</span></span>
+                </a>
+                <span class="text-slate-300">/</span>
+                <span id="header-id" class="text-xs font-bold text-indigo-700">Complaint #...</span>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div id="navbar-user-avatar" class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center"></div>
+                    <div class="hidden sm:block text-left leading-tight">
+                        <p id="navbar-user-name" class="text-xs font-bold text-slate-800"></p>
+                        <p id="navbar-user-username" class="text-[11px] font-medium text-slate-500"></p>
+                        <p id="navbar-user-role" class="text-[10px] text-indigo-600 font-bold uppercase tracking-wider"></p>
+                    </div>
+                </div>
+                <a href="/admin/complaints.html" class="text-xs font-semibold text-slate-500 hover:text-indigo-600 flex items-center gap-1.5 transition border-l border-slate-200 pl-4 ml-1">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Complaints List
+                </a>
+                <button onclick="Auth.logout()" id="logout-btn" title="Logout"
+                        class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-xl border border-slate-200 transition cursor-pointer">
+                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+        <div class="grid lg:grid-cols-12 gap-6 items-start">
+
+            <!-- Left 8 Cols: Complaint Details, Timeline, Feedback -->
+            <div class="lg:col-span-8 space-y-6">
+
+                <!-- Ticket Card -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-4">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                        <div class="space-y-1">
+                            <div class="flex items-center gap-3">
+                                <span id="ticket-id" class="px-3 py-1 rounded-lg bg-indigo-50 text-indigo-700 font-mono font-bold text-sm">#...</span>
+                                <div id="priority-badge"></div>
+                                <div id="status-badge"></div>
+                            </div>
+                            <h1 id="complaint-title" class="text-xl font-bold text-slate-900 mt-2">Loading...</h1>
+                        </div>
+                        <div class="text-xs text-slate-400">
+                            <p>Submitted by</p>
+                            <p id="student-name" class="font-bold text-slate-800 mt-0.5">...</p>
+                        </div>
+                    </div>
+
+                    <!-- Meta Details -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs">
+                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase">Category</span>
+                            <p id="category-name" class="font-semibold text-slate-800 mt-1">...</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase">Location</span>
+                            <p id="location-name" class="font-semibold text-slate-800 mt-1">...</p>
+                        </div>
+                        <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
+                            <span class="text-[10px] font-bold text-slate-400 uppercase">Assigned Technician</span>
+                            <p id="tech-name" class="font-semibold text-indigo-700 mt-1">Unassigned</p>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div>
+                        <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-2">Description</h3>
+                        <p id="complaint-desc" class="text-xs text-slate-700 bg-slate-50 p-4 rounded-xl border border-slate-100 leading-relaxed whitespace-pre-line"></p>
+                    </div>
+
+                    <!-- Evidence Photo (if present) -->
+                    <div id="image-section" class="hidden pt-2">
+                        <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-2">Attached Photo Evidence</h3>
+                        <a id="image-link" target="_blank">
+                            <img id="complaint-image" class="max-h-60 rounded-xl border border-slate-200 shadow-sm" alt="Evidence Photo">
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Timeline Audit Trail -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
+                    <h3 class="text-sm font-bold uppercase text-slate-700 tracking-wider">Audit Trail & Work History</h3>
+                    <div id="timeline-container" class="space-y-6 relative pl-4 sm:pl-6 border-l-2 border-slate-100 ml-3">
+                        <p class="text-xs text-slate-400">Loading timeline...</p>
+                    </div>
+                </div>
+
+                <!-- Student Feedback (if available) -->
+                <div id="feedback-card" class="hidden bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-2">
+                    <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider">Student Resolution Rating</h3>
+                    <div id="feedback-stars" class="text-amber-500 font-bold text-xl"></div>
+                    <p id="feedback-comment" class="text-xs text-slate-700 italic"></p>
+                </div>
+
+            </div>
+
+            <!-- Right 4 Cols: Administrative Action Controls -->
+            <div class="lg:col-span-4 space-y-6">
+
+                <!-- Assign / Reassign Box -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+                    <h3 class="text-xs font-bold uppercase text-slate-700 tracking-wider flex items-center gap-2">
+                        <i data-lucide="user-check" class="w-4 h-4 text-indigo-600"></i>
+                        Assign Technician
+                    </h3>
+                    <form id="assign-form" class="space-y-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Technician</label>
+                            <select id="action-technician" required
+                                    class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 bg-white">
+                                <option value="">Select technician...</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Assignment Note</label>
+                            <textarea id="action-assign-comment" rows="2" placeholder="Instructions for technician..."
+                                      class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500"></textarea>
+                        </div>
+                        <button type="submit" class="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-sm transition">
+                            Assign Work Order
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Priority Change Box -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+                    <h3 class="text-xs font-bold uppercase text-slate-700 tracking-wider flex items-center gap-2">
+                        <i data-lucide="alert-triangle" class="w-4 h-4 text-orange-600"></i>
+                        Update Priority
+                    </h3>
+                    <div class="flex items-center gap-2">
+                        <select id="action-priority" class="flex-1 px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 bg-white">
+                            <option value="LOW">LOW</option>
+                            <option value="MEDIUM">MEDIUM</option>
+                            <option value="HIGH">HIGH</option>
+                            <option value="CRITICAL">CRITICAL</option>
+                        </select>
+                        <button id="btn-update-priority" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-semibold shadow-sm transition">
+                            Apply
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Status Override Box -->
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+                    <h3 class="text-xs font-bold uppercase text-slate-700 tracking-wider flex items-center gap-2">
+                        <i data-lucide="git-commit" class="w-4 h-4 text-emerald-600"></i>
+                        Administrative Status Override
+                    </h3>
+                    <form id="status-override-form" class="space-y-3">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Set New Status</label>
+                            <select id="action-status" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500 bg-white">
+                                <option value="SUBMITTED">SUBMITTED</option>
+                                <option value="ASSIGNED">ASSIGNED</option>
+                                <option value="IN_PROGRESS">IN PROGRESS</option>
+                                <option value="RESOLVED">RESOLVED</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Reason / Admin Comment</label>
+                            <textarea id="action-status-comment" rows="2" placeholder="e.g. Verified resolution with department head."
+                                      class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500"></textarea>
+                        </div>
+                        <button type="submit" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-sm transition">
+                            Override Status
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/ui.js"></script>
+    <script>
+        lucide.createIcons();
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const complaintId = urlParams.get('id');
+
+        if (!Auth.requireRole('ROLE_ADMIN')) {
+            // stopped
+        } else if (!complaintId) {
+            window.location.href = '/admin/complaints.html';
+        } else {
+            UI.initNavbar();
+            loadTechnicians();
+            loadComplaintDetails(complaintId);
+            setupActionListeners(complaintId);
+        }
+
+        async function loadTechnicians() {
+            try {
+                const res = await API.get('/admin/technicians');
+                const select = document.getElementById('action-technician');
+                (res.data || []).forEach(t => {
+                    const opt = document.createElement('option');
+                    opt.value = t.id;
+                    opt.textContent = `${t.name} (${t.specialization || 'General'}) — ${t.activeTasksCount} Active`;
+                    select.appendChild(opt);
+                });
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function loadComplaintDetails(id) {
+            try {
+                const res = await API.get(`/complaints/${id}`);
+                const c = res.data;
+
+                document.getElementById('header-id').textContent = `Complaint #${c.id}`;
+                document.getElementById('ticket-id').textContent = `#${c.id}`;
+                document.getElementById('complaint-title').textContent = c.title;
+                document.getElementById('complaint-desc').textContent = c.description;
+                document.getElementById('student-name').textContent = c.studentName;
+                document.getElementById('category-name').textContent = c.categoryName;
+                document.getElementById('location-name').textContent = c.locationDisplay;
+                document.getElementById('tech-name').textContent = c.assignedTechnicianName || 'Unassigned';
+                document.getElementById('priority-badge').innerHTML = UI.getPriorityBadge(c.priority);
+                document.getElementById('status-badge').innerHTML = UI.getStatusBadge(c.status);
+
+                // Set selectors to current values
+                document.getElementById('action-priority').value = c.priority;
+                document.getElementById('action-status').value = c.status;
+                if (c.assignedTechnicianId) {
+                    document.getElementById('action-technician').value = c.assignedTechnicianId;
+                }
+
+                if (c.imageUrl) {
+                    document.getElementById('complaint-image').src = c.imageUrl;
+                    document.getElementById('image-link').href = c.imageUrl;
+                    document.getElementById('image-section').classList.remove('hidden');
+                }
+
+                renderTimeline(c.updates || []);
+
+                if (c.feedback) {
+                    const fbCard = document.getElementById('feedback-card');
+                    fbCard.classList.remove('hidden');
+                    document.getElementById('feedback-stars').textContent = '★'.repeat(c.feedback.rating) + '☆'.repeat(5 - c.feedback.rating) + ` (${c.feedback.rating}/5)`;
+                    document.getElementById('feedback-comment').textContent = c.feedback.comment ? `"${c.feedback.comment}"` : 'No written feedback comment';
+                }
+
+                lucide.createIcons();
+            } catch (err) {
+                console.error(err);
+                UI.showToast('Failed to load complaint details', 'error');
+            }
+        }
+
+        function renderTimeline(updates) {
+            const container = document.getElementById('timeline-container');
+            if (!updates || updates.length === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-400">No updates logged.</p>';
+                return;
+            }
+
+            container.innerHTML = updates.map(u => `
+                <div class="relative pl-6 space-y-1">
+                    <span class="absolute -left-[31px] top-1 w-3.5 h-3.5 rounded-full bg-indigo-600 border-2 border-white ring-4 ring-indigo-50"></span>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="font-bold text-slate-800">${escapeHtml(u.updatedByName)} (${u.updatedByRole.replace('ROLE_', '')})</span>
+                        <span class="text-slate-400 text-[10px]">${UI.formatDate(u.createdAt)}</span>
+                    </div>
+                    <div class="inline-block">${UI.getStatusBadge(u.newStatus)}</div>
+                    <p class="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-100 mt-1">${escapeHtml(u.comment || 'Status updated.')}</p>
+                </div>
+            `).join('');
+        }
+
+        function setupActionListeners(id) {
+            // Assign
+            document.getElementById('assign-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const technicianId = document.getElementById('action-technician').value;
+                const comment = document.getElementById('action-assign-comment').value;
+                try {
+                    await API.put(`/admin/complaints/${id}/assign`, { technicianId, comment });
+                    UI.showToast('Technician assigned successfully!', 'success');
+                    loadComplaintDetails(id);
+                } catch (err) {
+                    UI.showToast(err.message || 'Assignment failed', 'error');
+                }
+            });
+
+            // Priority
+            document.getElementById('btn-update-priority').addEventListener('click', async () => {
+                const priority = document.getElementById('action-priority').value;
+                try {
+                    await API.put(`/admin/complaints/${id}/priority?priority=${priority}`);
+                    UI.showToast(`Priority updated to ${priority}!`, 'success');
+                    loadComplaintDetails(id);
+                } catch (err) {
+                    UI.showToast(err.message || 'Failed to update priority', 'error');
+                }
+            });
+
+            // Status Override
+            document.getElementById('status-override-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const status = document.getElementById('action-status').value;
+                const comment = document.getElementById('action-status-comment').value;
+                try {
+                    await API.put(`/admin/complaints/${id}/status`, { status, comment });
+                    UI.showToast('Status override applied!', 'success');
+                    loadComplaintDetails(id);
+                } catch (err) {
+                    UI.showToast(err.message || 'Failed to update status', 'error');
+                }
+            });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+    </script>
+</body>
+</html>

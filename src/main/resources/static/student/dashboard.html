@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard — FixIt Campus</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/custom.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50 text-slate-900 antialiased min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="/student/dashboard.html" class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-100">
+                        <i data-lucide="wrench" class="w-4 h-4"></i>
+                    </div>
+                    <span class="font-bold text-lg text-slate-900 tracking-tight">Fix<span class="text-indigo-600">It</span></span>
+                </a>
+                <span class="hidden sm:inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100">
+                    Student Portal
+                </span>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div id="navbar-user-avatar" class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center"></div>
+                    <div class="hidden sm:block text-left leading-tight">
+                        <p id="navbar-user-name" class="text-xs font-bold text-slate-800"></p>
+                        <p id="navbar-user-username" class="text-[11px] font-medium text-slate-500"></p>
+                        <p id="navbar-user-role" class="text-[10px] text-indigo-600 font-bold uppercase tracking-wider"></p>
+                    </div>
+                </div>
+                <button onclick="Auth.logout()" id="logout-btn" title="Logout"
+                        class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-rose-600 hover:bg-rose-50 rounded-xl border border-slate-200 transition cursor-pointer">
+                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Body -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Welcome Banner -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-gradient-to-r from-indigo-900 via-indigo-800 to-indigo-950 text-white rounded-2xl p-6 sm:p-8 shadow-xl shadow-indigo-950/10">
+            <div class="space-y-2">
+                <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Campus Issue Tracker</h1>
+                <p class="text-sm text-indigo-200 max-w-xl">
+                    Notice something broken in classrooms, labs, or hostels? Submit a complaint with photo evidence and track real-time technician progress.
+                </p>
+            </div>
+            <a href="/student/report.html"
+               class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white text-indigo-900 font-bold text-sm shadow-md hover:bg-indigo-50 transition flex-shrink-0">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                Report a Problem
+            </a>
+        </div>
+
+        <!-- Metrics Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Filed</span>
+                    <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                        <i data-lucide="folder-kanban" class="w-4 h-4"></i>
+                    </div>
+                </div>
+                <p id="stat-total" class="text-2xl sm:text-3xl font-black text-slate-900">0</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Submitted</span>
+                    <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                        <i data-lucide="clock" class="w-4 h-4"></i>
+                    </div>
+                </div>
+                <p id="stat-submitted" class="text-2xl sm:text-3xl font-black text-amber-600">0</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">In Progress</span>
+                    <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                        <i data-lucide="wrench" class="w-4 h-4"></i>
+                    </div>
+                </div>
+                <p id="stat-progress" class="text-2xl sm:text-3xl font-black text-blue-600">0</p>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Resolved</span>
+                    <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i>
+                    </div>
+                </div>
+                <p id="stat-resolved" class="text-2xl sm:text-3xl font-black text-emerald-600">0</p>
+            </div>
+        </div>
+
+        <!-- Complaints Table Card -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden space-y-4">
+            <div class="p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900">My Submitted Complaints</h2>
+                    <p class="text-xs text-slate-500">Track current status, technician assignments, and history</p>
+                </div>
+                <span id="complaints-count-badge" class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 w-fit">
+                    0 Complaints
+                </span>
+            </div>
+
+            <!-- Table Container -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-600">
+                    <thead class="bg-slate-50 text-xs font-semibold uppercase text-slate-500 border-y border-slate-100">
+                        <tr>
+                            <th class="px-6 py-3">Ticket ID</th>
+                            <th class="px-6 py-3">Issue Title</th>
+                            <th class="px-6 py-3">Category</th>
+                            <th class="px-6 py-3">Location</th>
+                            <th class="px-6 py-3">Priority</th>
+                            <th class="px-6 py-3">Status</th>
+                            <th class="px-6 py-3">Assigned To</th>
+                            <th class="px-6 py-3 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="complaints-table-body" class="divide-y divide-slate-100">
+                        <tr>
+                            <td colspan="8" class="text-center py-12 text-slate-400">
+                                Loading your complaints...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/ui.js"></script>
+    <script>
+        lucide.createIcons();
+
+        // Verify Student Role
+        if (!Auth.requireRole('ROLE_STUDENT')) {
+            // stopped
+        } else {
+            UI.initNavbar('dashboard');
+            loadMyComplaints();
+        }
+
+        async function loadMyComplaints() {
+            try {
+                const [complaintsRes, statsRes] = await Promise.all([
+                    API.get('/complaints/my'),
+                    API.get('/complaints/my/stats').catch(() => null)
+                ]);
+                const complaints = complaintsRes.data || [];
+
+                let total = complaints.length;
+                let submitted = complaints.filter(c => c.status === 'SUBMITTED').length;
+                let inProgress = complaints.filter(c => c.status === 'ASSIGNED' || c.status === 'IN_PROGRESS').length;
+                let resolved = complaints.filter(c => c.status === 'RESOLVED').length;
+
+                if (statsRes && statsRes.data) {
+                    total = statsRes.data.total !== undefined ? statsRes.data.total : complaints.length;
+                    submitted = statsRes.data.submitted !== undefined ? statsRes.data.submitted : 0;
+                    inProgress = (statsRes.data.assigned || 0) + (statsRes.data.inProgress || 0);
+                    resolved = statsRes.data.resolved !== undefined ? statsRes.data.resolved : 0;
+                }
+
+                document.getElementById('stat-total').textContent = total;
+                document.getElementById('stat-submitted').textContent = submitted;
+                document.getElementById('stat-progress').textContent = inProgress;
+                document.getElementById('stat-resolved').textContent = resolved;
+                document.getElementById('complaints-count-badge').textContent = `${total} Complaints`;
+
+                const tbody = document.getElementById('complaints-table-body');
+                if (total === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="text-center py-16">
+                                <div class="max-w-xs mx-auto space-y-3">
+                                    <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mx-auto">
+                                        <i data-lucide="inbox" class="w-6 h-6"></i>
+                                    </div>
+                                    <h4 class="font-bold text-slate-800">No Complaints Reported Yet</h4>
+                                    <p class="text-xs text-slate-500">Everything looks in working order! Click below if you discover an issue on campus.</p>
+                                    <a href="/student/report.html" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-semibold hover:bg-indigo-700 transition">
+                                        <i data-lucide="plus" class="w-3.5 h-3.5"></i> Report First Problem
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    lucide.createIcons();
+                    return;
+                }
+
+                tbody.innerHTML = complaints.map(c => `
+                    <tr class="hover:bg-slate-50/80 transition">
+                        <td class="px-6 py-4 font-mono font-bold text-indigo-600">#${c.id}</td>
+                        <td class="px-6 py-4">
+                            <div class="font-semibold text-slate-900">${escapeHtml(c.title)}</div>
+                            <div class="text-xs text-slate-400">${UI.formatDate(c.createdAt)}</div>
+                        </td>
+                        <td class="px-6 py-4 text-xs font-medium text-slate-700">${escapeHtml(c.categoryName)}</td>
+                        <td class="px-6 py-4 text-xs text-slate-600">${escapeHtml(c.locationDisplay)}</td>
+                        <td class="px-6 py-4">${UI.getPriorityBadge(c.priority)}</td>
+                        <td class="px-6 py-4">${UI.getStatusBadge(c.status)}</td>
+                        <td class="px-6 py-4 text-xs font-medium ${c.assignedTechnicianName ? 'text-indigo-700' : 'text-slate-400 italic'}">
+                            ${c.assignedTechnicianName ? escapeHtml(c.assignedTechnicianName) : 'Unassigned'}
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <a href="/student/detail.html?id=${c.id}"
+                               class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition">
+                                <span>Track</span>
+                                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                            </a>
+                        </td>
+                    </tr>
+                `).join('');
+
+                lucide.createIcons();
+            } catch (err) {
+                console.error(err);
+                UI.showToast(err.message || 'Failed to load complaints', 'error');
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+    </script>
+</body>
+</html>
